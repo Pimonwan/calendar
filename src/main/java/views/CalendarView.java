@@ -8,17 +8,28 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
+import models.EventDatabase;
 import models.Today;
 
 public class CalendarView extends JPanel {
+	private EventDatabase eventDB;
+	
 	private Today today;
 	protected int yy, mm, dd;
 	protected JButton labs[][];
@@ -34,6 +45,7 @@ public class CalendarView extends JPanel {
 	 * Construct a Cal, starting with today.
 	 */
 	public CalendarView() {
+		this.eventDB = new EventDatabase();
 		calPanel = new JPanel();
 		btnPanel = new JPanel();
 		today = new Today();
@@ -124,6 +136,7 @@ public class CalendarView extends JPanel {
 	};
 
 	protected void recompute() {
+		
 		if (mm < 0 || mm > 11)
 			throw new IllegalArgumentException("Month " + mm + " bad, must be 0-11");
 		calendar = new GregorianCalendar(yy, mm, dd);
@@ -147,6 +160,8 @@ public class CalendarView extends JPanel {
 		for (int i = 1; i <= daysInMonth; i++) {
 			JButton b = labs[(leadGap + i - 1) / 7][(leadGap + i - 1) % 7];
 			b.setText(Integer.toString(i));
+			
+//			System.out.println("name : "+b.getText());
 		}
 
 		// 7 days/week * up to 6 rows
@@ -155,8 +170,42 @@ public class CalendarView extends JPanel {
 			b.setText("");
 			
 		}
+		System.out.println("year : "+this.yy);
+		System.out.println("month : "+this.mm);
 	}
+	
+	public int[] showEventDayOnCal() {
+		int[] days = new int[31];		
+		
+		try {
+			Class.forName("org.sqlite.JDBC");
+			String dbURL = "jdbc:sqlite:eventSchedule.db";
+			Connection conn = eventDB.getConn();
+			if (conn != null) {
+				System.out.println(" ----- Data in Database ----- ");
+				String query = "SELECT * FROM eventSchedule WHERE year="+this.yy+" AND month="+(this.mm+1)+";";
+				
+				Statement statement = conn.createStatement();
+				ResultSet resultSet = statement.executeQuery(query);
+				
+				while (resultSet.next()) {
+					String topic = resultSet.getString("Topic");
+					int day = resultSet.getInt("Day");
+					System.out.println("DAY : "+day);
+				}
+				
+			}
+			
+		}catch (ClassNotFoundException ex) {
+			ex.printStackTrace();
+		}
+		catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+		
+		return days;
 
+	}
 	// isLeap() returns true if the given year is a Leap Year.
 
 	public boolean isLeap(int year) {

@@ -18,7 +18,7 @@ public class EventDatabase {
 	public EventDatabase() {
 		try {
             Class.forName("org.sqlite.JDBC");
-            conn = DriverManager.getConnection(dbURL);
+            setConn(DriverManager.getConnection(dbURL));
 //            conn.close();
             
         } catch (ClassNotFoundException ex) {
@@ -31,8 +31,8 @@ public class EventDatabase {
 	public void insertDB(String topic, int day, int month, int year, String startTime, String endTime, String place){
 		String query = "INSERT INTO eventSchedule VALUES ('"+topic+"',"+day+","+month+","+year+",'"+startTime+"','"+endTime+"','"+place+"');";
 		try {
-			if(conn != null) {
-				statement = conn.createStatement();
+			if(getConn() != null) {
+				statement = getConn().createStatement();
 				statement.executeUpdate(query);
 				System.out.println("Insert Succession!!");
 			}
@@ -45,13 +45,12 @@ public class EventDatabase {
         }
 	}
 	
-	public void deleteDB(int day) {
-//		DELETE FROM table_name
-//		WHERE condition;
-		String query = "DELETE FROM eventSchedule WHERE DAY = "+day+";";
+	public void deleteDB(String topic) {
+		String query = "DELETE FROM eventSchedule WHERE TOPIC = '"+topic+"';";
+		System.out.println(query);
 		try {
-			if(conn != null) {
-				statement = conn.createStatement();
+			if(getConn() != null) {
+				statement = getConn().createStatement();
 				statement.executeUpdate(query);
 				System.out.println("Delete Succession!!");
 			}
@@ -62,6 +61,17 @@ public class EventDatabase {
 		} catch (SQLException ex) {
             ex.printStackTrace();
         }
+        		  
 	}
+
+	public Connection getConn() {
+		return conn;
+	}
+
+	public void setConn(Connection conn) {
+		this.conn = conn;
+	}
+	
+	
 			
 }
