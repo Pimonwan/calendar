@@ -2,6 +2,7 @@
 
 package controllers;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -15,10 +16,9 @@ public class EventListener implements ActionListener{
 	}
 	
 	public void actionPerformed(ActionEvent e){
-		view.getFrame().remove(view.getCalendarView());
-		view.getFrame().add(view.getAddEventPage());
+		view.getFrame().remove(view.getShowEventOfDay());
+		view.getFrame().add(view.getAddEventPage(), BorderLayout.EAST);
 		view.getFrame().pack();
-			
 	}
 
 }

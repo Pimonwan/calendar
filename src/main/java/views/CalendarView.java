@@ -2,56 +2,41 @@
 
 package views;
 
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.LinkedList;
-import java.util.List;
-
+import java.util.*;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
-import models.EventDatabase;
-import models.Today;
-
 public class CalendarView extends JPanel {
-	private EventDatabase eventDB;
-	
-	private Today today;
-	protected int yy, mm, dd;
-	protected JButton labs[][];
+	protected int inYear, inMonth, inDay;   //interested Year, Month, Day
+	protected JButton labs[][]; //keep button to be day on calendar
 	protected int leadGap = 0;
 	Calendar calendar = new GregorianCalendar();
-	protected final int thisYear = calendar.get(Calendar.YEAR);
-	protected final int thisMonth = calendar.get(Calendar.MONTH);
+	protected final int thisYear = calendar.get(calendar.YEAR);
+	protected final int thisMonth = calendar.get(calendar.MONTH);
 	private JButton b0, addEventBtn;
 	private JComboBox monthChoice, yearChoice;
-	private JPanel calPanel, btnPanel;
-	
+	private JPanel calPanel, btnPanel, panel;
+
+	public final static int dom[] = {31, 28, 31, 30, /* jan feb mar apr */
+			31, 30, 31, 31, /* may jun jul aug */
+			30, 31, 30, 31 /* sep oct nov dec */
+	};
 	/**
 	 * Construct a Cal, starting with today.
 	 */
 	public CalendarView() {
-		this.eventDB = new EventDatabase();
-		calPanel = new JPanel();
+		calPanel = new JPanel(new GridLayout(2,1));
 		btnPanel = new JPanel();
-		today = new Today();
-		yy = today.getYear();
-		mm = today.getMonth();
-		dd = today.getDay();
+		panel = new JPanel(new GridLayout(2,1,3,3));
+		inYear = calendar.get(calendar.YEAR);
+		inMonth = calendar.get(calendar.MONTH);
+		inDay = calendar.get(calendar.DAY_OF_MONTH);
+
 		buildGUI();
 		recompute();
 	}
@@ -59,46 +44,24 @@ public class CalendarView extends JPanel {
 	private void buildGUI() {
 		getAccessibleContext().setAccessibleDescription("Calendar not accessible yet. Sorry!");
 		setBorder(BorderFactory.createEtchedBorder());
-
 		setLayout(new BorderLayout());
 
 		JPanel tp = new JPanel();
 		String[] months = { "January", "February", "March", "April", "May", "June", "July", "August", "September",
 				"October", "November", "December" };
 		tp.add(monthChoice = new JComboBox(months));		
-//		for (int i = 0; i < months.length; i++)
-//			monthChoice.addItem(months[i]);
-		monthChoice.setSelectedItem(months[mm]);
-		monthChoice.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ae) {
-				int i = monthChoice.getSelectedIndex();
-				if (i >= 0) {
-					mm = i;
-					// System.out.println("Month=" + mm);
-					recompute();
-				}
-			}
-		});
+
+		monthChoice.setSelectedItem(months[inMonth]);
 		monthChoice.getAccessibleContext().setAccessibleName("Months");
 		monthChoice.getAccessibleContext().setAccessibleDescription("Choose a month of the year");
 
 		tp.add(yearChoice = new JComboBox());
 		yearChoice.setEditable(true);
-		for (int i = yy - 10; i < yy + 20; i++)
+		for (int i = inYear - 10; i < inYear + 20; i++)
 			yearChoice.addItem(Integer.toString(i));
-		yearChoice.setSelectedItem(Integer.toString(yy));
-		yearChoice.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ae) {
-				int i = yearChoice.getSelectedIndex();
-				if (i >= 0) {
-					yy = Integer.parseInt(yearChoice.getSelectedItem().toString());
-					// System.out.println("Year=" + yy);
-					recompute();
-				}
-			}
-		});
-		calPanel.add(BorderLayout.CENTER, tp);
-
+		yearChoice.setSelectedItem(Integer.toString(inYear));
+		
+		
 		JPanel bp = new JPanel();
 		bp.setLayout(new GridLayout(7, 7));
 		labs = new JButton[6][7]; // first row is days
@@ -110,116 +73,86 @@ public class CalendarView extends JPanel {
 		bp.add(new JButton("T"));
 		bp.add(new JButton("F"));
 		bp.add(new JButton("S"));
+		
 
 		// Construct all the buttons, and add them.
 		for (int i = 0; i < 6; i++)
 			for (int j = 0; j < 7; j++) {
 				bp.add(labs[i][j] = new JButton(""));
-				labs[i][j].setBackground(Color.yellow);
-				if(j == 0 || j == 6) {
-					labs[i][j].setBackground(Color.RED);
-				}
 			}
 
-		calPanel.add(BorderLayout.SOUTH, bp);
+		calPanel.add(tp);
 		
 		addEventBtn = new JButton("Add Event");
 		btnPanel.add(addEventBtn);
+
+		panel.setLayout(new GridLayout(2,1));
+		panel.add(bp);
+		panel.add(btnPanel);
+
+		this.add(calPanel, BorderLayout.NORTH);
+		this.add(panel);
 		
-		this.add(calPanel, BorderLayout.CENTER);
-		this.add(btnPanel, BorderLayout.SOUTH);
 	}
 
-	public final static int dom[] = { 31, 28, 31, 30, /* jan feb mar apr */
-			31, 30, 31, 31, /* may jun jul aug */
-			30, 31, 30, 31 /* sep oct nov dec */
-	};
-
-	protected void recompute() {
+	public void recompute() {
 		
-		if (mm < 0 || mm > 11)
-			throw new IllegalArgumentException("Month " + mm + " bad, must be 0-11");
-		calendar = new GregorianCalendar(yy, mm, dd);
+		if (inMonth < 0 || inMonth > 11)
+			throw new IllegalArgumentException("Month " + inMonth + " bad, must be 0-11");
+		calendar = new GregorianCalendar(inYear, inMonth, inDay);
 
 		// Compute how much to leave before the first.
 		// getDay() returns 0 for Sunday, which is just right.
-		leadGap = new GregorianCalendar(yy, mm, 1).get(Calendar.DAY_OF_WEEK) - 1;
-		// System.out.println("leadGap = " + leadGap);
+		leadGap = new GregorianCalendar(inYear, inMonth, 1).get(Calendar.DAY_OF_WEEK) - 1;
 
-		int daysInMonth = dom[mm];
-		if (isLeap(calendar.get(Calendar.YEAR)) && mm == 1)
-			// if (isLeap(calendar.get(Calendar.YEAR)) && mm > 1)
+		int daysInMonth = dom[inMonth];
+		if (isLeap(calendar.get(Calendar.YEAR)) && inMonth == 1)
 			++daysInMonth;
 
 		// Blank out the labels before 1st day of month
 		for (int i = 0; i < leadGap; i++) {
 			labs[0][i].setText("");
+			labs[0][i].setBackground(Color.gray);
 		}
 
-		// Fill in numbers for the day of month.		
+		// Fill in numbers for the day of month.
 		for (int i = 1; i <= daysInMonth; i++) {
 			JButton b = labs[(leadGap + i - 1) / 7][(leadGap + i - 1) % 7];
 			b.setText(Integer.toString(i));
-			
-//			System.out.println("name : "+b.getText());
+			b.setBackground(Color.yellow);
 		}
 
 		// 7 days/week * up to 6 rows
 		for (int i = leadGap  + daysInMonth; i < 6 * 7; i++) {
 			JButton b = labs[(i) / 7][(i) % 7];
 			b.setText("");
-			
+			b.setBackground(new Color(128,128,128));
 		}
-		System.out.println("year : "+this.yy);
-		System.out.println("month : "+this.mm);
-	}
-	
-	public int[] showEventDayOnCal() {
-		int[] days = new int[31];		
-		
-		try {
-			Class.forName("org.sqlite.JDBC");
-			String dbURL = "jdbc:sqlite:eventSchedule.db";
-			Connection conn = eventDB.getConn();
-			if (conn != null) {
-				System.out.println(" ----- Data in Database ----- ");
-				String query = "SELECT * FROM eventSchedule WHERE year="+this.yy+" AND month="+(this.mm+1)+";";
-				
-				Statement statement = conn.createStatement();
-				ResultSet resultSet = statement.executeQuery(query);
-				
-				while (resultSet.next()) {
-					String topic = resultSet.getString("Topic");
-					int day = resultSet.getInt("Day");
-					System.out.println("DAY : "+day);
-				}
-				
-			}
-			
-		}catch (ClassNotFoundException ex) {
-			ex.printStackTrace();
-		}
-		catch (SQLException ex) {
-			ex.printStackTrace();
-		}
-		
-		return days;
 
+		//set color of today
+		if (thisYear == inYear && inMonth == thisMonth) {
+			int today = calendar.get(calendar.DAY_OF_MONTH);
+			JButton b = labs[(leadGap + today - 1) / 7][(leadGap + today - 1) % 7];
+			b.setBackground(Color.red);
+		}
 	}
+
 	// isLeap() returns true if the given year is a Leap Year.
-
 	public boolean isLeap(int year) {
 		if (year % 4 == 0 && year % 100 != 0 || year % 400 == 0)
 			return true;
 		return false;
 	}
-	
+
 	public JButton getAddEventBtn() {
 		return this.addEventBtn;
 	}
-	
-	public Today getToday() {
-		return this.today;
-	}
-
+	public JButton[][] getLabs() { return this.labs; }
+	public int getInYear() { return this.inYear; }
+	public void setInYear(int year) { this.inYear = year; }
+	public int getInMonth() { return this.inMonth; }
+	public JComboBox getMonthChoice() { return this.monthChoice; }
+	public void setInMonth(int month) { this.inMonth = month; }
+	public JComboBox getYearChoice() { return  this.yearChoice; }
+	public int getLeadGap() { return this.leadGap; }
 }

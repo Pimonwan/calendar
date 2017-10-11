@@ -3,6 +3,7 @@
 package views;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -16,16 +17,11 @@ import javax.swing.JTextField;
 
 public class AddEventPage extends JPanel{
 	private Calendar cal;
-	
 	private JPanel panel, topicPanel, datePanel, timePanel, placePanel, addBtnPanel, canBtnPanel, btnPanel;
 	private JLabel titleText, topicText, dateOfEventText, timeText, toTimeText, placeText;
-	
 	private JTextField topicField, placeField, startTimeField, endTimeField;
-	
 	private JComboBox daysChoice, monthChoice, yearChoice;
-	
 	private JButton addBtn, cancleBtn;
-	
 	private String[] days = {"1","2","3","4","5","6","7","8","9","10","11"
 			,"12","13","14","15","16","17","18","19","20","21","22"
 			,"23","24","25","26","27","28","29","30","31"};
@@ -45,7 +41,6 @@ public class AddEventPage extends JPanel{
 		
 		
 		this.titleText = new JLabel("*****  Add Event  *****");
-		
 		this.topicText = new JLabel("Topic : ");
 		this.topicField = new JTextField(20);
 		
@@ -98,7 +93,7 @@ public class AddEventPage extends JPanel{
 		placePanel.add(placeText);
 		placePanel.add(placeField);
 		
-		btnPanel.setLayout(new GridLayout(1,2,0,0));
+		btnPanel.setLayout(new GridLayout(1,2));
 		addBtnPanel.add(getAddBtn());
 		canBtnPanel.add(getCancleBtn());
 		
@@ -106,7 +101,8 @@ public class AddEventPage extends JPanel{
 		btnPanel.add(canBtnPanel);
 		
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
-		this.setLayout(new GridLayout(6,1,10,10));
+		this.setLayout(new GridLayout(6,1));
+		this.setPreferredSize(new Dimension(500,200));
 		this.add(panel);
 		this.add(topicPanel);
 		this.add(datePanel);
@@ -119,35 +115,28 @@ public class AddEventPage extends JPanel{
 	public JButton getAddBtn() {
 		return addBtn;
 	}
-
-	public void setAddBtn(JButton addBtn) {
-		this.addBtn = addBtn;
-	}
-
 	public JButton getCancleBtn() {
 		return cancleBtn;
 	}
 
+	public void setAddBtn(JButton addBtn) {
+		this.addBtn = addBtn;
+	}
 	public void setCancleBtn(JButton cancleBtn) {
 		this.cancleBtn = cancleBtn;
 	}
-	
 	public String getTopicField() {
 		return this.topicField.getText();
 	}
-	
 	public void setTopicField(String s) {
 		this.topicField.setText(s);
 	}
-	
 	public String getPlaceField() {
 		return this.placeField.getText();
 	}
-	
 	public void setPlaceField(String s) {
 		this.placeField.setText(s);
 	}
-
 	public int getDaysChoice() {
 		String s = (String) this.daysChoice.getSelectedItem();
 		return Integer.parseInt(s);
@@ -156,16 +145,13 @@ public class AddEventPage extends JPanel{
 	public void setDaysChoice() {
 		this.daysChoice.setSelectedItem(cal.get(Calendar.DAY_OF_MONTH)+"");
 	}
-
 	public int getMonthChoice() {
 		return this.monthChoice.getSelectedIndex()+1;
 		
 	}
-
 	public void setMonthChoice() {
 		this.monthChoice.setSelectedItem(months[cal.get(Calendar.MONTH)]);
 	}
-
 	public int getYearChoice() {
 		String s = (String) this.yearChoice.getSelectedItem();
 		return Integer.parseInt(s);
@@ -174,19 +160,15 @@ public class AddEventPage extends JPanel{
 	public void setYearChoice() {
 		this.yearChoice.setSelectedItem(cal.get(Calendar.YEAR)+"");
 	}
-
 	public String getStartTimeField() {
 		return startTimeField.getText();
 	}
-
 	public void setStartTimeField(String s) {
 		this.startTimeField.setText(s);;
 	}
-
 	public String getEndTimeField() {
 		return endTimeField.getText();
 	}
-
 	public void setEndTimeField(String s) {
 		this.endTimeField.setText(s);;
 	}

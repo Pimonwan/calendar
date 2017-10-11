@@ -4,7 +4,6 @@ package ku.cs.calendar;
 
 
 import controllers.MainController;
-import models.EventDatabase;
 
 /**
  * Hello world!
