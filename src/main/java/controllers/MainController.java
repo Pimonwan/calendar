@@ -18,7 +18,6 @@ public class MainController{
 		view = new MainView();
 		eventDB = new GetEventDatabase();
 		view.initFrame();
-
 		view.getCalendarView().getAddEventBtn().addActionListener(new EventListener(view));
 
 		//add action to each day button on calendar
@@ -51,6 +50,7 @@ public class MainController{
 			}
 		});
 
+		setEventDayOnCal();
 		view.getAddEventPage().getCancleBtn().addActionListener(new AddPageListener(view));
 		view.getAddEventPage().getAddBtn().addActionListener(new AddPageListener(view));
 
@@ -66,6 +66,7 @@ public class MainController{
 			int leadGap = view.getCalendarView().getLeadGap();
 			int day = Integer.parseInt(s);
 			JButton b = labs[(leadGap + day - 1) / 7][(leadGap + day - 1) % 7];
+			//(0,153,76) = green
 			b.setBackground(new Color(0,153,76));
 		}
 	}
