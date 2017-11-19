@@ -15,7 +15,6 @@ public class App
     {
     	MainController startApp = new MainController();
 		startApp.startApplication();
-		
-
+        System.out.println("I'm a boss as bitch");
     }
 }

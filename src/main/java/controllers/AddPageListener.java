@@ -1,40 +1,51 @@
 /* 5810405207 Pimonwan Sutmee */
-
+/* this class control about all buttons in add page */
 package controllers;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import models.GetEventDatabase;
-import models.InsertDB;
+import models.Database;
 import views.MainView;
+import javax.swing.*;
 
 public class AddPageListener implements ActionListener{
 	private MainView view;
-	private GetEventDatabase eventDB;
-	private InsertDB insertDB;
+	private Database database;
 	
-	public AddPageListener(MainView view) {
+	public AddPageListener(MainView view, Database database) {
 		this.view = view;
-		eventDB = new GetEventDatabase();
-		insertDB = new InsertDB();
+		this.database = database;
 	}
 	
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
 		//if "Add" button was clicked
 		if(command.equals("Add")) {
-			System.out.println("ADD");
 			String topic = view.getAddEventPage().getTopicField();
 			int day = view.getAddEventPage().getDaysChoice();
 			int month = view.getAddEventPage().getMonthChoice();
 			int year = view.getAddEventPage().getYearChoice();
-			String startTime = view.getAddEventPage().getStartTimeField();
-			String endTime = view.getAddEventPage().getEndTimeField();
-			String place = view.getAddEventPage().getPlaceField();
+			double startTime = view.getAddEventPage().getStartTime();
+			double endTime = view.getAddEventPage().getEndTime();
+			if(endTime < startTime){
+				JOptionPane.showMessageDialog(view.getFrame(),
+						"Wrong input time.",
+						"Inane error",
+						JOptionPane.ERROR_MESSAGE);
+			}else {
+				String place = view.getAddEventPage().getPlaceField();
 
-			insertDB.insertDB(topic,day,month,year,startTime,endTime,place);
-			view.getFrame().remove(view.getAddEventPage());
-			view.getFrame().pack();
+				database.insert(topic, day, month, year, startTime, endTime, place);
+
+				if (view.getCalendarView().getInMonth() + 1 == month && view.getCalendarView().getInYear() == year) {
+					JButton b = view.getCalendarView().getLab(day);
+					b.setBackground(new Color(0, 153, 76));
+				}
+
+				view.getFrame().remove(view.getAddEventPage());
+				view.getFrame().pack();
+			}
 
 		}
 		//if "Cancle" button was clicked
@@ -43,7 +54,5 @@ public class AddPageListener implements ActionListener{
 			view.getFrame().remove(view.getShowEventOfDay());
 			view.getFrame().pack();
 		}
-		
 	}
-
 }

@@ -13,6 +13,9 @@ public class MainView {
 	private CalendarView calendarView;
 	private AddEventPage addEventPage;
 	private ShowEventOfDay eventView;
+	private DeleteEventView deleteEventView;
+	private EditEventView editEventView;
+	private EditEventPage editPage;
 	private JPanel panel;
 	
 	public MainView() {
@@ -27,6 +30,13 @@ public class MainView {
 		
 		this.panel = new JPanel();
 		panel.add(calendarView,new GridLayout(3,3));
+
+		this.deleteEventView = new DeleteEventView();
+
+		this.editEventView = new EditEventView();
+
+		this.editPage = new EditEventPage();
+		editPage.render();
 	}
 	
 	public void initFrame() {
@@ -53,5 +63,7 @@ public class MainView {
 	public JPanel getPanel() {
 		return this.panel;
 	}
-
+	public DeleteEventView getDeleteEventView() { return this.deleteEventView; }
+	public EditEventView getEditEventView() { return this.editEventView; }
+	public EditEventPage getEditPage() { return this.editPage;	}
 }

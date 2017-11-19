@@ -10,6 +10,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+import javax.swing.border.LineBorder;
 
 public class CalendarView extends JPanel {
 	protected int inYear, inMonth, inDay;   //interested Year, Month, Day
@@ -18,6 +19,7 @@ public class CalendarView extends JPanel {
 	Calendar calendar = new GregorianCalendar();
 	protected final int thisYear = calendar.get(calendar.YEAR);
 	protected final int thisMonth = calendar.get(calendar.MONTH);
+	protected final int thisDay = calendar.get(calendar.DAY_OF_MONTH);
 	private JButton b0, addEventBtn;
 	private JComboBox monthChoice, yearChoice;
 	private JPanel calPanel, btnPanel, panel;
@@ -113,27 +115,29 @@ public class CalendarView extends JPanel {
 		for (int i = 0; i < leadGap; i++) {
 			labs[0][i].setText("");
 			labs[0][i].setBackground(Color.gray);
+			labs[0][i].setBorder(BorderFactory.createLineBorder(Color.black, 1));
 		}
 
 		// Fill in numbers for the day of month.
 		for (int i = 1; i <= daysInMonth; i++) {
 			JButton b = labs[(leadGap + i - 1) / 7][(leadGap + i - 1) % 7];
 			b.setText(Integer.toString(i));
-			b.setBackground(Color.yellow);
+			b.setBackground(new Color(255,255,51));
+			b.setBorder(BorderFactory.createLineBorder(Color.black, 1));
 		}
 
 		// 7 days/week * up to 6 rows
 		for (int i = leadGap  + daysInMonth; i < 6 * 7; i++) {
 			JButton b = labs[(i) / 7][(i) % 7];
 			b.setText("");
-			b.setBackground(new Color(128,128,128));
+			b.setBackground(Color.gray);
+			b.setBorder(BorderFactory.createLineBorder(Color.black, 1));
 		}
 
 		//set color of today
 		if (thisYear == inYear && inMonth == thisMonth) {
-			int today = calendar.get(calendar.DAY_OF_MONTH);
-			JButton b = labs[(leadGap + today - 1) / 7][(leadGap + today - 1) % 7];
-			b.setBackground(Color.red);
+			JButton b = labs[(leadGap + thisDay - 1) / 7][(leadGap + thisDay - 1) % 7];
+			b.setBorder(BorderFactory.createLineBorder(new Color(255,51,51), 3));
 		}
 	}
 
@@ -148,6 +152,8 @@ public class CalendarView extends JPanel {
 		return this.addEventBtn;
 	}
 	public JButton[][] getLabs() { return this.labs; }
+	public int getInDay() { return this.inDay; }
+	public void setInDay(int day) { this.inDay = day; }
 	public int getInYear() { return this.inYear; }
 	public void setInYear(int year) { this.inYear = year; }
 	public int getInMonth() { return this.inMonth; }
@@ -155,4 +161,7 @@ public class CalendarView extends JPanel {
 	public void setInMonth(int month) { this.inMonth = month; }
 	public JComboBox getYearChoice() { return  this.yearChoice; }
 	public int getLeadGap() { return this.leadGap; }
+	public JButton getLab(int day){
+		return labs[(leadGap + day - 1) / 7][(leadGap + day - 1) % 7];
+	}
 }
