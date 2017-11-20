@@ -1,3 +1,4 @@
+/* 5810405207 Pimonwan Sutmee */
 package controllers;
 
 import models.Database;
@@ -8,11 +9,11 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class EditListener implements ActionListener {
+public class EditTableListener implements ActionListener {
     private MainView view;
     private Database database;
 
-    public EditListener(MainView view, Database database) {
+    public EditTableListener(MainView view, Database database) {
         this.database = database;
         this.view = view;
     }
@@ -21,7 +22,7 @@ public class EditListener implements ActionListener {
         String command = e.getActionCommand();
         if (command.equals("Edit")) {
             boolean checkSelect = false;
-            DefaultTableModel model = view.getEditEventView().getModel();
+            DefaultTableModel model = view.getEditTable().getModel();
 
             int count = 0;
             int getIndex = -1;
@@ -33,14 +34,7 @@ public class EditListener implements ActionListener {
                 }
 
             }
-//            if (checkSelect) {
-//                database.delete(model.getValueAt(i, 1), view.getCalendarView().getInDay(), view.getCalendarView().getInMonth() + 1,
-//                        view.getCalendarView().getInYear(), model.getValueAt(i, 3), model.getValueAt(i, 4),
-//                        model.getValueAt(i, 5));
-//
-//                JButton b = view.getCalendarView().getLab(view.getCalendarView().getInDay());
-//                b.setBackground(new Color(255, 255, 51));
-//            }
+
             if(count > 1){
                 JOptionPane.showMessageDialog(view.getFrame(),
                         "You can select just 1 choice",
@@ -59,9 +53,10 @@ public class EditListener implements ActionListener {
                 view.getEditPage().setForUpdate(topic,day,month,year,startTime,endTime,place);
 
                 int id = database.getId(topic,day,month,year,startTime,endTime,place);
-                view.getEditPage().getEditBtn().addActionListener(new EditPageListener(view,database,id));
+                view.getEditPage().getButton().addActionListener(new EditPageListener(view,database,id));
+                view.getEditPage().getCancleBtn().addActionListener(new EditPageListener(view,database,id));
 
-                view.getFrame().remove(view.getEditEventView());
+                view.getFrame().remove(view.getEditTable());
                 view.getFrame().add(view.getEditPage());
                 view.getFrame().setSize(500,400);
 
@@ -74,7 +69,7 @@ public class EditListener implements ActionListener {
     }
 
     public void turnBack() {
-        view.getFrame().remove(view.getEditEventView());
+        view.getFrame().remove(view.getEditTable());
         view.getFrame().add(view.getPanel());
         view.getFrame().pack();
     }

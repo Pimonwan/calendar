@@ -1,10 +1,8 @@
+/* 5810405207 Pimonwan Sutmee */
 package controllers;
 
 import models.Database;
 import views.MainView;
-
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 

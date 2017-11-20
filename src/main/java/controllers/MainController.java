@@ -25,6 +25,7 @@ public class MainController{
 			}
 		}
 		setEventDayOnCal();
+
 		view.getCalendarView().getYearChoice().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				int i = view.getCalendarView().getYearChoice().getSelectedIndex();
@@ -59,51 +60,13 @@ public class MainController{
 		});
 
 		view.getAddEventPage().getCancleBtn().addActionListener(new AddPageListener(view, database));
-		view.getAddEventPage().getAddBtn().addActionListener(new AddPageListener(view, database));
-
-		view.getShowEventOfDay().getEditButt().addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				view.getEditEventView().drawTable(view.getShowEventOfDay());
-				view.getEditEventView().render();
-
-				view.getFrame().remove(view.getShowEventOfDay());
-				view.getFrame().remove(view.getPanel());
-				view.getFrame().add(view.getEditEventView());
-
-				JTable t = view.getEditEventView().getTable();
-				for(int i = 0 ; i < t.getRowCount() ; i++){
-					System.out.println(t.getValueAt(i,5));
-				}
-
-				view.getFrame().pack();
-			}
-		});
-
-		view.getEditEventView().getCancleButt().addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				view.getFrame().remove(view.getEditEventView());
-				view.getFrame().add(view.getPanel());
-				view.getFrame().pack();
-			}
-		});
-
-		view.getEditEventView().getEditButt().addActionListener(new EditListener(view, database));
-
-		view.getShowEventOfDay().getDeleteButt().addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ae) {
-				view.getDeleteEventView().drawTable(view.getShowEventOfDay());
-				view.getDeleteEventView().render();
-
-				view.getFrame().remove(view.getShowEventOfDay());
-				view.getFrame().remove(view.getPanel());
-				view.getFrame().add(view.getDeleteEventView());
-				view.getFrame().pack();
-			}
-		});
-
-
-		view.getDeleteEventView().getCancleButt().addActionListener(new DeletePageListener(view, database));
-		view.getDeleteEventView().getDeleteButt().addActionListener(new DeletePageListener(view, database));
+		view.getAddEventPage().getButton().addActionListener(new AddPageListener(view, database));
+		view.getEditTable().getButton().addActionListener(new EditTableListener(view, database));
+		view.getEditTable().getCancleButt().addActionListener(new EditTableListener(view, database));
+		view.getShowEventOfDay().getEditButt().addActionListener(new ShowEventPageListener(view));
+		view.getShowEventOfDay().getDeleteButt().addActionListener(new ShowEventPageListener(view));
+		view.getDeleteTable().getCancleButt().addActionListener(new DeletePageListener(view, database));
+		view.getDeleteTable().getButton().addActionListener(new DeletePageListener(view, database));
 		view.initFrame();
 	}
 

@@ -1,3 +1,4 @@
+/* 5810405207 Pimonwan Sutmee */
 package controllers;
 
 import models.Database;
@@ -20,7 +21,7 @@ public class DeletePageListener implements ActionListener {
         String command = e.getActionCommand();
         if(command.equals("Delete")){
             boolean checkSelect = false;
-            DefaultTableModel model = view.getDeleteEventView().getModel();
+            DefaultTableModel model = view.getDeleteTable().getModel();
 
             for(int i = 0 ; i < model.getRowCount() ; i++){
                 checkSelect = Boolean.valueOf(model.getValueAt(i,0).toString());
@@ -41,7 +42,7 @@ public class DeletePageListener implements ActionListener {
     }
 
     public void turnBack(){
-        view.getFrame().remove(view.getDeleteEventView());
+        view.getFrame().remove(view.getDeleteTable());
         view.getFrame().add(view.getPanel());
         view.getFrame().pack();
     }

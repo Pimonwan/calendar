@@ -1,19 +1,20 @@
+/* 5810405207 Pimonwan Sutmee */
 package views;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-public class DeleteEventView extends JPanel{
+public class TableView extends JPanel {
     private JTable table;
     private DefaultTableModel model;
     private JScrollPane scrollPane;
     private ShowEventOfDay showEventOfDay;
-    private JButton deleteButt, cancleButt;
+    private JButton button, cancleButt;
 
-    public DeleteEventView(){
+    public TableView(){
         scrollPane = new JScrollPane();
         scrollPane.setBounds(33, 41, 494, 90);
-        deleteButt = new JButton("Delete");
+        button = new JButton("");
         cancleButt = new JButton("Cancle");
     }
 
@@ -64,12 +65,13 @@ public class DeleteEventView extends JPanel{
     }
     public void render(){
         this.add(this.scrollPane);
-        this.add(deleteButt);
+        this.add(button);
         this.add(cancleButt);
     }
 
     public JButton getCancleButt() { return cancleButt; }
-    public JButton getDeleteButt() { return deleteButt; }
+    public JButton getButton() { return button; }
+    public void setButton(String s) { this.button.setText(s); }
     public JTable getTable() { return table; }
     public DefaultTableModel getModel() { return model; }
 }
