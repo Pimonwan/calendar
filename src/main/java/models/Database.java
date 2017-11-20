@@ -52,7 +52,6 @@ public class Database {
             try {
                 if (conn != null) {
                     conn.close();
-                    System.out.println("Database was close1");
                 }
             } catch (SQLException shouldNotHandleMe) {
                 //...
@@ -90,8 +89,6 @@ public class Database {
             try {
                 if (conn != null) {
                     conn.close();
-                    System.out.println("Database was close2");
-
                 }
             } catch (SQLException shouldNotHandleMe) {
                 //...
